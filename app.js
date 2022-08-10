@@ -61,58 +61,34 @@ const createPost = (req, res) => {
 
 //mission 3 게시글목록 조회
 const PostsList = (req, res) => {
-  res.json({
-    data: [
-      {
-        userID: 1,
-        userName: "Rebekah Johnson",
-        postingId: 1,
-        postingTitle: "간단한 HTTP API 개발 시작!",
-        postingContent:
-          "Node.js에 내장되어 있는 http 모듈을 사용해서 HTTP server를 구현.",
-      },
-      {
-        userID: 2,
-        userName: "Fabian Predovic",
-        postingId: 2,
-        postingTitle: "HTTP의 특성",
-        postingContent: "Request/Response와 Stateless!!",
-      },
-      {
-        userID: 3,
-        userName: "new user 1",
-        postingId: 3,
-        postingImageUrl: "내용 1",
-        postingContent: "sampleContent3",
-      },
-      {
-        userID: 4,
-        userName: "new user 2",
-        postingId: 4,
-        postingImageUrl: "내용 2",
-        postingContent: "sampleContent4",
-      },
-    ],
+  let postList = posts.map((post) => {
+    const user = users.find((user) => post.userId === user.id);
+    return {
+      userID: user.id,
+      userName: user.name,
+      postingId: post.id,
+      postingTitle: post.title,
+      postingContent: post.content,
+    };
   });
+
+  res.status(200).json({ data: postList });
 };
 
 //mission 4 게시글 수정
 const updatePost = (req, res) => {
-  posts.forEach((el, i) => {
-    const user = req.body.data;
+  const { id, content } = req.body;
 
-    if (user["postingId"] == posts[i]["id"]) {
-      res.status(200).json({
-        data: {
-          userId: posts[i]["userId"],
-          userName: users[posts[i]["userId"] - 1]["name"],
-          postingId: posts[i]["id"],
-          postingTitle: posts[i]["title"],
-          postingContent: user.postingContent,
-        },
-      });
-    }
-  });
+  const post = posts.find((post) => post.id === id);
+  const user = users.find((user) => user.id === post.userId);
+  const newPost = {
+    userId: user.id,
+    userName: user.name,
+    postingId: post.id,
+    postingTitle: post.title,
+    postingContent: content,
+  };
+  res.statsus(200).json({ data: newPost });
 };
 
 module.exports = { createUser, createPost, PostsList, updatePost };
