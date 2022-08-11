@@ -15,19 +15,19 @@ const users = [
 ];
 
 const createUser = (req, res) => {
-  const user = req.body.data; // 프론트에서 받아온 정보를 가져옵니다.
+  const user = req.body.data;
   const { id, name, email, password } = req.body.data;
 
-  //javaScript의 특징 중 하나 : key와 value 값이 똑같으면 안써도 됨...! 대박
+  //javaScript의 특징 중 하나 : key와 value 값이 똑같으면 안써도 됨
   users.push({ id, name, email, password });
 
-  res.status(201).json({ message: "USER_CREATED" });
   // express 덕분에 JSON.stringify 함수를 사용할 필요없이
-  // response 객체의 json 메소드를 활용합니다.
+  // response 객체의 json 메소드 활용
+  res.status(201).json({ message: "USER_CREATED" });
 };
 
 //mission 2 게시글 등록
-const posts = [
+let posts = [
   {
     id: 1,
     title: "간단한 HTTP API 개발 시작!",
@@ -49,7 +49,6 @@ const posts = [
 ];
 
 const createPost = (req, res) => {
-  //const user = req.body.post;
   const { id, title, content, userId } = req.body.post;
 
   posts.push({ id, title, content, userId });
@@ -88,7 +87,35 @@ const updatePost = (req, res) => {
     postingTitle: post.title,
     postingContent: content,
   };
-  res.statsus(200).json({ data: newPost });
+  res.status(200).json({ data: newPost });
 };
 
-module.exports = { createUser, createPost, PostsList, updatePost };
+//mission 5 게시글 삭제
+const deletePost = (req, res) => {
+  const id = req.body.id;
+  posts = posts.filter((post) => post.id !== id);
+  res.status(200).json({ message: "postingDeleted" });
+};
+
+//mission 6 유저와 게시글 조회
+const userAndPost = (req, res) => {
+  const userId = req.body.id;
+  const user = users.find((user) => user.id === userId);
+  const newPosts = posts.filter((post) => post.userId === user.id);
+  const result = {
+    userID: user.id,
+    userName: user.name,
+    postings: newPosts,
+  };
+
+  res.status(200).json({ data: result });
+};
+
+module.exports = {
+  createUser,
+  createPost,
+  PostsList,
+  updatePost,
+  deletePost,
+  userAndPost,
+};
